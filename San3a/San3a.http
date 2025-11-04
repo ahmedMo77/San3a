@@ -1,0 +1,6 @@
+@San3a_HostAddress = http://localhost:5263
+
+GET {{San3a_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
