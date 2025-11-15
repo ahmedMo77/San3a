@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace San3a.Core.Enums
 {
-    public enum UserType
+    public enum PostingType
     {
-        SuperAdmin,
-        Admin,
-        Worker,
-        Customer
+        Public,
+        Direct,
+        Hybrid
     }
 }

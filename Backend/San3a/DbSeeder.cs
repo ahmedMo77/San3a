@@ -26,7 +26,6 @@ namespace San3a.WebApi
                     EmailConfirmed = true,
                     NationalId = "00000000000000",
                     FullName = "Super Admin",
-                    IsApproved = true,
                     City = "Mansoura",
                     CreatedAt = DateTime.UtcNow,
                 };

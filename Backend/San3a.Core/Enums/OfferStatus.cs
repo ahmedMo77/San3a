@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace San3a.Core.Enums
 {
-    public enum UserType
+    public enum OfferStatus
     {
-        SuperAdmin,
-        Admin,
-        Worker,
-        Customer
+        Pending,
+        Accepted,
+        Rejected
+
     }
 }
