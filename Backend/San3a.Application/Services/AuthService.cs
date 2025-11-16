@@ -62,8 +62,6 @@ namespace San3a.Application.Services
             if (!await IsRoleAllowed(role))
                 return new AuthModel { Errors = { "Role does not exist." } };
 
-            user.IsApproved = await IsApprovedUser(user);
-
             await _userManager.AddToRoleAsync(user, role);
 
             var jwtSecurityToken = await GenerateJwtToken(user);
@@ -204,8 +202,8 @@ namespace San3a.Application.Services
         {
             var allowedRoles = new List<string>
             {
-                UserType.Craftsman.ToString(),
-                UserType.User.ToString()
+                UserType.Worker.ToString(),
+                UserType.Customer.ToString()
             };
 
             if (!allowedRoles.Contains(role))
@@ -215,7 +213,7 @@ namespace San3a.Application.Services
         }
         private async Task<bool> IsApprovedUser(AppUser user)
         {
-            if(await _userManager.IsInRoleAsync(user,UserType.User.ToString()))
+            if(await _userManager.IsInRoleAsync(user,UserType.Customer.ToString()))
                 return true;
 
             return false;
