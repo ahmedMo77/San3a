@@ -16,7 +16,5 @@ namespace San3a.Core.Entities
         public DateTime? RevokedAt { get; set; }
         public bool IsActive => RevokedAt == null && !IsExpired;
         public bool IsExpired => DateTime.UtcNow >= ExpiresAt;
-
-
     }
 }

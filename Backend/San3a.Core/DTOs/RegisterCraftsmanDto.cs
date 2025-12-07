@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace San3a.Core.DTOs
 {
-    public class AddRoleModel
+    public class RegisterCraftsmanDto : RegisterAppUserDto
     {
-        public string UserId { get; set; }
-        public string Role { get; set; }
+        public string NationalId { get; set; }
+        public string ServiceId { get; set; }
     }
 }

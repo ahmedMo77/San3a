@@ -14,13 +14,15 @@ namespace San3a.Application.AutoMapper
     {
         public MappingProfile()
         {
-            CreateMap<RegisterModel, AppUser>()
-                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))
-                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
-                .ReverseMap();
+            CreateMap<RegisterAppUserDto, AppUser>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email.Substring(0, src.Email.IndexOf('@'))));
 
-            //CreateMap<IdentityRole, RoleDto>().ReverseMap();
-            //CreateMap<CreateRoleDto, IdentityRole>();
+            CreateMap<RegisterCraftsmanDto, AppUser>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email.Substring(0, src.Email.IndexOf('@'))));
+
+            CreateMap<RegisterAdminDto, AppUser>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email.Substring(0, src.Email.IndexOf('@'))));
         }
     }
+
 }

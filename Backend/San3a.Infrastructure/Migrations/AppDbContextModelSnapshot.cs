@@ -22,21 +22,6 @@ namespace San3a.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("CustomerSavedWorkers", b =>
-                {
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WorkerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CustomerId", "WorkerId");
-
-                    b.HasIndex("WorkerId");
-
-                    b.ToTable("CustomerSavedWorkers");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -170,6 +155,19 @@ namespace San3a.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("San3a.Core.Entities.Admin", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("IsSuperAdmin")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Admins");
+                });
+
             modelBuilder.Entity("San3a.Core.Entities.AppUser", b =>
                 {
                     b.Property<string>("Id")
@@ -179,6 +177,7 @@ namespace San3a.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Address")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("City")
@@ -203,18 +202,11 @@ namespace San3a.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ImgUrl")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NationalId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -233,11 +225,17 @@ namespace San3a.Infrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<string>("ProfileImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
@@ -256,295 +254,190 @@ namespace San3a.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("San3a.Core.Entities.Customer", b =>
+            modelBuilder.Entity("San3a.Core.Entities.Craftsman", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                    b.Property<string>("NationalId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("ServiceId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("ServiceId");
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Craftsmen");
                 });
 
-            modelBuilder.Entity("San3a.Core.Entities.JobPost", b =>
+            modelBuilder.Entity("San3a.Core.Entities.Customer", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AcceptedWorkerId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Budget")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("PostingType")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AcceptedWorkerId");
+                    b.ToTable("Customers");
+                });
 
-                    b.HasIndex("CreatedAt");
+            modelBuilder.Entity("San3a.Core.Entities.Job", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("AcceptedCraftsmanId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<double>("Budget")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ServiceId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AcceptedCraftsmanId");
 
                     b.HasIndex("CustomerId");
 
                     b.HasIndex("ServiceId");
 
-                    b.HasIndex("Status");
-
-                    b.ToTable("JobPosts", (string)null);
+                    b.ToTable("JobPosts");
                 });
 
             modelBuilder.Entity("San3a.Core.Entities.Offer", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("CraftsmanId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
 
-                    b.Property<int>("JobPostId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Notes")
+                    b.Property<string>("JobId")
                         .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<decimal>("ProposedPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("ProposedTimeline")
+                    b.Property<string>("Message")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int>("WorkerId")
-                        .HasColumnType("int");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Status");
+                    b.HasIndex("CraftsmanId");
 
-                    b.HasIndex("WorkerId");
+                    b.HasIndex("JobId");
 
-                    b.HasIndex("JobPostId", "WorkerId")
-                        .IsUnique();
-
-                    b.ToTable("Offers", (string)null);
+                    b.ToTable("Offers");
                 });
 
             modelBuilder.Entity("San3a.Core.Entities.Review", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Comment")
                         .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CraftsmanId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
 
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("JobPostId")
-                        .HasColumnType("int");
+                    b.Property<string>("CustomerId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
-                    b.Property<int>("WorkerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedAt");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("Rating");
-
-                    b.HasIndex("WorkerId");
-
-                    b.ToTable("Reviews", null, t =>
-                        {
-                            t.HasCheckConstraint("CK_Review_Rating", "[Rating] >= 1 AND [Rating] <= 5");
-                        });
-                });
-
-            modelBuilder.Entity("San3a.Core.Entities.ServiceType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IsActive");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("ServiceTypes", (string)null);
-                });
-
-            modelBuilder.Entity("San3a.Core.Entities.Worker", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CompletedJobsCount")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<bool>("IsVerified")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<decimal>("Rating")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("decimal(3,2)")
-                        .HasDefaultValue(0m);
-
-                    b.Property<int>("ServiceTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
+                    b.Property<string>("RevieweeId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("ReviewerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("ServiceTypeId");
+                    b.HasIndex("CraftsmanId");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("CustomerId");
 
-                    b.ToTable("Workers", (string)null);
+                    b.HasIndex("RevieweeId");
+
+                    b.HasIndex("ReviewerId");
+
+                    b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("CustomerSavedWorkers", b =>
+            modelBuilder.Entity("San3a.Core.Entities.Service", b =>
                 {
-                    b.HasOne("San3a.Core.Entities.Customer", null)
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasOne("San3a.Core.Entities.Worker", null)
-                        .WithMany()
-                        .HasForeignKey("WorkerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Services");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -598,18 +491,26 @@ namespace San3a.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("San3a.Core.Entities.Admin", b =>
+                {
+                    b.HasOne("San3a.Core.Entities.AppUser", "AppUser")
+                        .WithOne()
+                        .HasForeignKey("San3a.Core.Entities.Admin", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+                });
+
             modelBuilder.Entity("San3a.Core.Entities.AppUser", b =>
                 {
                     b.OwnsMany("San3a.Core.Entities.RefreshToken", "RefreshTokens", b1 =>
                         {
-                            b1.Property<string>("AppUserId")
+                            b1.Property<string>("UserId")
                                 .HasColumnType("nvarchar(450)");
 
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+                            b1.Property<string>("Token")
+                                .HasColumnType("nvarchar(450)");
 
                             b1.Property<DateTime>("CreatedAt")
                                 .HasColumnType("datetime2");
@@ -620,49 +521,65 @@ namespace San3a.Infrastructure.Migrations
                             b1.Property<DateTime?>("RevokedAt")
                                 .HasColumnType("datetime2");
 
-                            b1.Property<string>("Token")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.HasKey("AppUserId", "Id");
+                            b1.HasKey("UserId", "Token");
 
                             b1.ToTable("RefreshToken");
 
                             b1.WithOwner()
-                                .HasForeignKey("AppUserId");
+                                .HasForeignKey("UserId");
                         });
 
                     b.Navigation("RefreshTokens");
                 });
 
-            modelBuilder.Entity("San3a.Core.Entities.Customer", b =>
+            modelBuilder.Entity("San3a.Core.Entities.Craftsman", b =>
                 {
-                    b.HasOne("San3a.Core.Entities.AppUser", "User")
+                    b.HasOne("San3a.Core.Entities.AppUser", "AppUser")
                         .WithOne()
-                        .HasForeignKey("San3a.Core.Entities.Customer", "UserId")
+                        .HasForeignKey("San3a.Core.Entities.Craftsman", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.HasOne("San3a.Core.Entities.Service", "Service")
+                        .WithMany("Craftsmen")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Service");
                 });
 
-            modelBuilder.Entity("San3a.Core.Entities.JobPost", b =>
+            modelBuilder.Entity("San3a.Core.Entities.Customer", b =>
                 {
-                    b.HasOne("San3a.Core.Entities.Worker", "AcceptedWorker")
-                        .WithMany("AcceptedJobs")
-                        .HasForeignKey("AcceptedWorkerId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                    b.HasOne("San3a.Core.Entities.AppUser", "AppUser")
+                        .WithOne()
+                        .HasForeignKey("San3a.Core.Entities.Customer", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("San3a.Core.Entities.Customer", "Customer")
-                        .WithMany("JobPosts")
-                        .HasForeignKey("CustomerId")
+                    b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("San3a.Core.Entities.Job", b =>
+                {
+                    b.HasOne("San3a.Core.Entities.Craftsman", "AcceptedWorker")
+                        .WithMany("AcceptedJobs")
+                        .HasForeignKey("AcceptedCraftsmanId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("San3a.Core.Entities.ServiceType", "serviceType")
-                        .WithMany("JobPosts")
+                    b.HasOne("San3a.Core.Entities.Customer", "Customer")
+                        .WithMany("Jobs")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("San3a.Core.Entities.Service", "serviceType")
+                        .WithMany("Jobs")
                         .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("AcceptedWorker");
@@ -674,87 +591,83 @@ namespace San3a.Infrastructure.Migrations
 
             modelBuilder.Entity("San3a.Core.Entities.Offer", b =>
                 {
-                    b.HasOne("San3a.Core.Entities.JobPost", "JobPost")
+                    b.HasOne("San3a.Core.Entities.Craftsman", "Worker")
                         .WithMany("Offers")
-                        .HasForeignKey("JobPostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("San3a.Core.Entities.Worker", "Worker")
-                        .WithMany("Offers")
-                        .HasForeignKey("WorkerId")
+                        .HasForeignKey("CraftsmanId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("JobPost");
+                    b.HasOne("San3a.Core.Entities.Job", "Job")
+                        .WithMany("Offers")
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Job");
 
                     b.Navigation("Worker");
                 });
 
             modelBuilder.Entity("San3a.Core.Entities.Review", b =>
                 {
-                    b.HasOne("San3a.Core.Entities.Customer", "Customer")
+                    b.HasOne("San3a.Core.Entities.Craftsman", null)
                         .WithMany("Reviews")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("CraftsmanId");
 
-                    b.HasOne("San3a.Core.Entities.Worker", "Worker")
+                    b.HasOne("San3a.Core.Entities.Customer", null)
                         .WithMany("Reviews")
-                        .HasForeignKey("WorkerId")
+                        .HasForeignKey("CustomerId");
+
+                    b.HasOne("San3a.Core.Entities.AppUser", "Reviewee")
+                        .WithMany("ReceivedReviews")
+                        .HasForeignKey("RevieweeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Customer");
-
-                    b.Navigation("Worker");
-                });
-
-            modelBuilder.Entity("San3a.Core.Entities.Worker", b =>
-                {
-                    b.HasOne("San3a.Core.Entities.ServiceType", "ServiceType")
-                        .WithMany("workers")
-                        .HasForeignKey("ServiceTypeId")
+                    b.HasOne("San3a.Core.Entities.AppUser", "Reviewer")
+                        .WithMany("WrittenReviews")
+                        .HasForeignKey("ReviewerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("San3a.Core.Entities.AppUser", "User")
-                        .WithOne()
-                        .HasForeignKey("San3a.Core.Entities.Worker", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Reviewee");
 
-                    b.Navigation("ServiceType");
-
-                    b.Navigation("User");
+                    b.Navigation("Reviewer");
                 });
 
-            modelBuilder.Entity("San3a.Core.Entities.Customer", b =>
+            modelBuilder.Entity("San3a.Core.Entities.AppUser", b =>
                 {
-                    b.Navigation("JobPosts");
+                    b.Navigation("ReceivedReviews");
 
-                    b.Navigation("Reviews");
+                    b.Navigation("WrittenReviews");
                 });
 
-            modelBuilder.Entity("San3a.Core.Entities.JobPost", b =>
-                {
-                    b.Navigation("Offers");
-                });
-
-            modelBuilder.Entity("San3a.Core.Entities.ServiceType", b =>
-                {
-                    b.Navigation("JobPosts");
-
-                    b.Navigation("workers");
-                });
-
-            modelBuilder.Entity("San3a.Core.Entities.Worker", b =>
+            modelBuilder.Entity("San3a.Core.Entities.Craftsman", b =>
                 {
                     b.Navigation("AcceptedJobs");
 
                     b.Navigation("Offers");
 
                     b.Navigation("Reviews");
+                });
+
+            modelBuilder.Entity("San3a.Core.Entities.Customer", b =>
+                {
+                    b.Navigation("Jobs");
+
+                    b.Navigation("Reviews");
+                });
+
+            modelBuilder.Entity("San3a.Core.Entities.Job", b =>
+                {
+                    b.Navigation("Offers");
+                });
+
+            modelBuilder.Entity("San3a.Core.Entities.Service", b =>
+                {
+                    b.Navigation("Craftsmen");
+
+                    b.Navigation("Jobs");
                 });
 #pragma warning restore 612, 618
         }

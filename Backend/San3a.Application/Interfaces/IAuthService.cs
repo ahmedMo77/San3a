@@ -11,9 +11,15 @@ namespace San3a.Application.Interfaces
 {
     public interface IAuthService
     {
-        Task<AuthModel> RegisterAsync(RegisterModel model);
-        Task<AuthModel> LoginAsync(LoginModel model);
-        Task<JwtSecurityToken> GenerateJwtToken(AppUser user);
-        Task<AuthModel> RefreshTokenAsync(string token);
+        Task<AuthResultDto> CreateAdminAsync(RegisterAdminDto dto);
+        Task<AuthResultDto> RegisterCustomerAsync(RegisterAppUserDto dto);
+        Task<AuthResultDto> RegisterCraftsmanAsync(RegisterCraftsmanDto dto);
+        Task<AuthResultDto> LoginAsync(LoginDto dto);
+
+        Task<AuthResultDto> RefreshTokenAsync(string refreshToken);
+
+        Task<string> ForgotPasswordAsync(string email);
+        Task<bool> ChangePasswordAsync(string userId, string oldPassword, string newPassword);
+        Task<bool> ResetPasswordAsync(ResetPasswordDto dto);
     }
 }

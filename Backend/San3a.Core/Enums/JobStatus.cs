@@ -9,8 +9,8 @@ namespace San3a.Core.Enums
     public enum JobStatus
     {
         Pending,
-        InProgress,
-        Done,
-        Cancelled
+        Assigned,
+        Completed,
+        Canceled,
     }
 }

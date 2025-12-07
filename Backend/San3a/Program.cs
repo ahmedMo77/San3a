@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using San3a.Application.AutoMapper;
 using San3a.Application.Interfaces;
 using San3a.Application.Services;
-using San3a.Application.AutoMapper;
 using San3a.Core.Entities;
 using San3a.Infrastructure.Data;
 using San3a.WebApi;
@@ -32,7 +32,7 @@ namespace San3a
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
-            var jwtSettings = builder.Configuration.GetSection("JWT");
+            var jwtSettings = builder.Configuration.GetSection("Jwt");
 
             builder.Services.AddAuthentication(options =>
             {
@@ -60,8 +60,10 @@ namespace San3a
             });
 
 
-            builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddAutoMapper(typeof(MappingProfile));
+            builder.Services.AddScoped<ITokenService, TokenService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
+
             // Add services to the container.
 
             builder.Services.AddControllers();
@@ -78,20 +80,10 @@ namespace San3a
                 app.UseSwaggerUI();
             }
 
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-
-                var userManager = services.GetRequiredService<UserManager<AppUser>>();
-                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-
-                await DbSeeder.SeedAsync(userManager, roleManager);
-            }
-
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
 

@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace San3a.Core.Enums
 {
-    public enum UserType
+    public enum ReviewType
     {
-        SuperAdmin,
-        Admin,
-        Worker,
-        Customer
+        CustomerToCraftsman = 1,
+        CraftsmanToCustomer = 2
     }
 }

@@ -1,5 +1,4 @@
-﻿using San3a.Core.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -9,15 +8,12 @@ using System.Threading.Tasks;
 
 namespace San3a.Core.Entities
 {
-    public class Customer
+    public class Admin
     {
         [Key]
-        public string Id { get; set; }
+        public string Id { get; set; }    // <-- This is AppUserId (shared PK)
+        public bool IsSuperAdmin { get; set; }
 
         public AppUser AppUser { get; set; }
-
-        public ICollection<Job> Jobs { get; set; } = new List<Job>();
-        public ICollection<Review> Reviews { get; set; } = new List<Review>();
     }
 }
-
