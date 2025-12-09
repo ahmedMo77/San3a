@@ -1,28 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using San3a.Core.Base;
 using San3a.Core.Enums;
 
 namespace San3a.Core.Entities
 {
-    public class Craftsman
+    public class Craftsman : BaseEntity
     {
-        [Key]
-        public string Id { get; set; }
-        public string NationalId { get; set; }
+        #region Properties
+        public string NationalId { get; set; } = string.Empty;
         public bool IsVerified { get; set; }
-        public string ServiceId { get; set; }
+        public string ServiceId { get; set; } = string.Empty;
+        #endregion
 
-        public AppUser AppUser { get; set; }
-        public Service Service { get; set; }
-
+        #region Navigation Properties
+        public AppUser AppUser { get; set; } = null!;
+        public Service Service { get; set; } = null!;
         public ICollection<Offer> Offers { get; set; } = new List<Offer>();
-        public ICollection<Review> Reviews { get; set; } = new List<Review>();
         public ICollection<Job> AcceptedJobs { get; set; } = new List<Job>();
+        public ICollection<Job> DirectJobs { get; set; } = new List<Job>();
+        public ICollection<JobRequest> JobRequests { get; set; } = new List<JobRequest>();
+        public ICollection<CraftsmanPortfolio> Portfolios { get; set; } = new List<CraftsmanPortfolio>();
+        #endregion
     }
-
 }

@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace San3a.Core.DTOs
 {
     public class LoginDto
     {
-        public string Email { get; set; }
+        #region Properties
+        [Required(ErrorMessage = "Email or Full Name is required")]
+        public string EmailOrUsername { get; set; }
+        
+        [Required(ErrorMessage = "Password is required")]
         public string Password { get; set; }
+        #endregion
     }
 }

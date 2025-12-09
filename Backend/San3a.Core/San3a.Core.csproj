@@ -13,6 +13,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Interfaces\ICraftsmanPortfolioRepository.cs" />
+    <Compile Include="Interfaces\ICraftsmanRepository.cs" />
+    <Compile Include="Interfaces\ICustomerRepository.cs" />
+    <Compile Include="Interfaces\IFileUploadRepository.cs" />
+    <Compile Include="Interfaces\IGenericRepository.cs" />
+    <Compile Include="Interfaces\IJobRepository.cs" />
+    <Compile Include="Interfaces\IJobRequestRepository.cs" />
+    <Compile Include="Interfaces\IOfferRepository.cs" />
+    <Compile Include="Interfaces\IPortfolioRequestRepository.cs" />
+    <Compile Include="Interfaces\IServiceRepository.cs" />
+    <Compile Include="Interfaces\ISpecification.cs" />
+    <Compile Include="Interfaces\IUnitOfWork.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.7" />
@@ -25,6 +40,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DTOs\Review\" />
   </ItemGroup>
 
 </Project>

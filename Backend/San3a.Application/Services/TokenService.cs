@@ -1,46 +1,47 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using San3a.Application.Interfaces;
 using San3a.Core.DTOs;
 using San3a.Core.Entities;
-using San3a.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace San3a.Application.Services
 {
     public class TokenService : ITokenService
     {
+        #region Fields
         private readonly IConfiguration _config;
         private readonly UserManager<AppUser> _userManager;
+        #endregion
 
+        #region Constructors
         public TokenService(IConfiguration config, UserManager<AppUser> userManager)
         {
             _config = config;
             _userManager = userManager;
         }
+        #endregion
 
+        #region Public Methods
         public async Task<string> GenerateJwtTokenAsync(AppUser user)
         {
             var jwtSettings = _config.GetSection("Jwt");
             var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
 
             var claims = new List<Claim>
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim("uid", user.Id),
-            new Claim(ClaimTypes.Name, user.UserName ?? user.Email)
-        };
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim("uid", user.Id),
+                new Claim(ClaimTypes.Name, user.UserName ?? user.Email)
+            };
 
             var roles = await _userManager.GetRolesAsync(user);
             foreach (var role in roles)
@@ -103,15 +104,12 @@ namespace San3a.Application.Services
             if (!rt.IsActive)
                 return new AuthResultDto { Success = false, Message = "Token expired or revoked" };
 
-            // revoke old token
             rt.RevokedAt = DateTime.UtcNow;
 
-            // create new refresh token
             var newRt = CreateRefreshToken();
             user.RefreshTokens.Add(newRt);
             await _userManager.UpdateAsync(user);
 
-            // generate new JWT
             var jwt = await GenerateJwtTokenAsync(user);
 
             return new AuthResultDto
@@ -121,7 +119,9 @@ namespace San3a.Application.Services
                 RefreshToken = newRt.Token
             };
         }
+        #endregion
 
+        #region Private Methods
         private string GenerateRandomToken()
         {
             var bytes = new byte[64];
@@ -129,7 +129,6 @@ namespace San3a.Application.Services
             rng.GetBytes(bytes);
             return Convert.ToBase64String(bytes);
         }
+        #endregion
     }
-
-
 }

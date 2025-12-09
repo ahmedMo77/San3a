@@ -12,8 +12,8 @@ using San3a.Infrastructure.Data;
 namespace San3a.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251207004401_Updates")]
-    partial class Updates
+    [Migration("20251208180932_DBM-1")]
+    partial class DBM1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -280,14 +280,121 @@ namespace San3a.Infrastructure.Migrations
                     b.ToTable("Craftsmen");
                 });
 
+            modelBuilder.Entity("San3a.Core.Entities.CraftsmanPortfolio", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CraftsmanId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CraftsmanId");
+
+                    b.ToTable("CraftsmanPortfolios");
+                });
+
+            modelBuilder.Entity("San3a.Core.Entities.CraftsmanPortfolioImage", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PortfolioId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PortfolioId");
+
+                    b.ToTable("PortfolioImages");
+                });
+
             modelBuilder.Entity("San3a.Core.Entities.Customer", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("NationalId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("NationalId")
+                        .IsUnique()
+                        .HasFilter("[NationalId] IS NOT NULL");
+
                     b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("San3a.Core.Entities.FileUpload", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EntityId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EntityType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("FileType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UploadedById")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FileUploads");
                 });
 
             modelBuilder.Entity("San3a.Core.Entities.Job", b =>
@@ -296,7 +403,6 @@ namespace San3a.Infrastructure.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("AcceptedCraftsmanId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<double>("Budget")
@@ -313,7 +419,14 @@ namespace San3a.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DirectCraftsmanId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PostingType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -321,8 +434,9 @@ namespace San3a.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -337,9 +451,70 @@ namespace San3a.Infrastructure.Migrations
 
                     b.HasIndex("CustomerId");
 
+                    b.HasIndex("DirectCraftsmanId");
+
                     b.HasIndex("ServiceId");
 
                     b.ToTable("JobPosts");
+                });
+
+            modelBuilder.Entity("San3a.Core.Entities.JobAttachment", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("JobId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobId");
+
+                    b.ToTable("JobAttachments");
+                });
+
+            modelBuilder.Entity("San3a.Core.Entities.JobRequest", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CraftsmanId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("JobId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CraftsmanId");
+
+                    b.HasIndex("JobId");
+
+                    b.ToTable("JobRequests");
                 });
 
             modelBuilder.Entity("San3a.Core.Entities.Offer", b =>
@@ -362,8 +537,9 @@ namespace San3a.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -377,49 +553,39 @@ namespace San3a.Infrastructure.Migrations
                     b.ToTable("Offers");
                 });
 
-            modelBuilder.Entity("San3a.Core.Entities.Review", b =>
+            modelBuilder.Entity("San3a.Core.Entities.PortfolioRequest", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Comment")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CraftsmanId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CustomerId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RevieweeId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ReviewerId")
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PortfolioId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CraftsmanId");
-
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("RevieweeId");
+                    b.HasIndex("PortfolioId");
 
-                    b.HasIndex("ReviewerId");
-
-                    b.ToTable("Reviews");
+                    b.ToTable("PortfolioRequests");
                 });
 
             modelBuilder.Entity("San3a.Core.Entities.Service", b =>
@@ -437,6 +603,9 @@ namespace San3a.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -546,12 +715,34 @@ namespace San3a.Infrastructure.Migrations
                     b.HasOne("San3a.Core.Entities.Service", "Service")
                         .WithMany("Craftsmen")
                         .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("AppUser");
 
                     b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("San3a.Core.Entities.CraftsmanPortfolio", b =>
+                {
+                    b.HasOne("San3a.Core.Entities.Craftsman", "Craftsman")
+                        .WithMany("Portfolios")
+                        .HasForeignKey("CraftsmanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Craftsman");
+                });
+
+            modelBuilder.Entity("San3a.Core.Entities.CraftsmanPortfolioImage", b =>
+                {
+                    b.HasOne("San3a.Core.Entities.CraftsmanPortfolio", "Portfolio")
+                        .WithMany("Images")
+                        .HasForeignKey("PortfolioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Portfolio");
                 });
 
             modelBuilder.Entity("San3a.Core.Entities.Customer", b =>
@@ -570,8 +761,7 @@ namespace San3a.Infrastructure.Migrations
                     b.HasOne("San3a.Core.Entities.Craftsman", "AcceptedWorker")
                         .WithMany("AcceptedJobs")
                         .HasForeignKey("AcceptedCraftsmanId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("San3a.Core.Entities.Customer", "Customer")
                         .WithMany("Jobs")
@@ -579,17 +769,54 @@ namespace San3a.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("San3a.Core.Entities.Service", "serviceType")
+                    b.HasOne("San3a.Core.Entities.Craftsman", "DirectCraftsman")
+                        .WithMany("DirectJobs")
+                        .HasForeignKey("DirectCraftsmanId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("San3a.Core.Entities.Service", "ServiceType")
                         .WithMany("Jobs")
                         .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("AcceptedWorker");
 
                     b.Navigation("Customer");
 
-                    b.Navigation("serviceType");
+                    b.Navigation("DirectCraftsman");
+
+                    b.Navigation("ServiceType");
+                });
+
+            modelBuilder.Entity("San3a.Core.Entities.JobAttachment", b =>
+                {
+                    b.HasOne("San3a.Core.Entities.Job", "Job")
+                        .WithMany("Attachments")
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Job");
+                });
+
+            modelBuilder.Entity("San3a.Core.Entities.JobRequest", b =>
+                {
+                    b.HasOne("San3a.Core.Entities.Craftsman", "Craftsman")
+                        .WithMany("JobRequests")
+                        .HasForeignKey("CraftsmanId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("San3a.Core.Entities.Job", "Job")
+                        .WithMany("DirectRequests")
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Craftsman");
+
+                    b.Navigation("Job");
                 });
 
             modelBuilder.Entity("San3a.Core.Entities.Offer", b =>
@@ -611,58 +838,58 @@ namespace San3a.Infrastructure.Migrations
                     b.Navigation("Worker");
                 });
 
-            modelBuilder.Entity("San3a.Core.Entities.Review", b =>
+            modelBuilder.Entity("San3a.Core.Entities.PortfolioRequest", b =>
                 {
-                    b.HasOne("San3a.Core.Entities.Craftsman", null)
-                        .WithMany("Reviews")
-                        .HasForeignKey("CraftsmanId");
-
-                    b.HasOne("San3a.Core.Entities.Customer", null)
-                        .WithMany("Reviews")
-                        .HasForeignKey("CustomerId");
-
-                    b.HasOne("San3a.Core.Entities.AppUser", "Reviewee")
-                        .WithMany("ReceivedReviews")
-                        .HasForeignKey("RevieweeId")
+                    b.HasOne("San3a.Core.Entities.Customer", "Customer")
+                        .WithMany("PortfolioRequests")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("San3a.Core.Entities.AppUser", "Reviewer")
-                        .WithMany("WrittenReviews")
-                        .HasForeignKey("ReviewerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("San3a.Core.Entities.CraftsmanPortfolio", "Portfolio")
+                        .WithMany("Requests")
+                        .HasForeignKey("PortfolioId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Reviewee");
+                    b.Navigation("Customer");
 
-                    b.Navigation("Reviewer");
-                });
-
-            modelBuilder.Entity("San3a.Core.Entities.AppUser", b =>
-                {
-                    b.Navigation("ReceivedReviews");
-
-                    b.Navigation("WrittenReviews");
+                    b.Navigation("Portfolio");
                 });
 
             modelBuilder.Entity("San3a.Core.Entities.Craftsman", b =>
                 {
                     b.Navigation("AcceptedJobs");
 
+                    b.Navigation("DirectJobs");
+
+                    b.Navigation("JobRequests");
+
                     b.Navigation("Offers");
 
-                    b.Navigation("Reviews");
+                    b.Navigation("Portfolios");
+                });
+
+            modelBuilder.Entity("San3a.Core.Entities.CraftsmanPortfolio", b =>
+                {
+                    b.Navigation("Images");
+
+                    b.Navigation("Requests");
                 });
 
             modelBuilder.Entity("San3a.Core.Entities.Customer", b =>
                 {
                     b.Navigation("Jobs");
 
-                    b.Navigation("Reviews");
+                    b.Navigation("PortfolioRequests");
                 });
 
             modelBuilder.Entity("San3a.Core.Entities.Job", b =>
                 {
+                    b.Navigation("Attachments");
+
+                    b.Navigation("DirectRequests");
+
                     b.Navigation("Offers");
                 });
 

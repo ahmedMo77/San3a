@@ -1,41 +1,40 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using San3a.Core.Base;
 using San3a.Core.Enums;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace San3a.Core.Entities
 {
-    public class Job
+    public class Job : BaseAuditableEntity
     {
-        [Key]
-        public string Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string Location { get; set; }
+        #region Properties
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string Location { get; set; } = string.Empty;
         public double Budget { get; set; }
-        public JobStatus Status { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
+        public JobStatus Status { get; set; } = JobStatus.Open;
+        public PostingType PostingType { get; set; } = PostingType.Public;
+        public string CustomerId { get; set; } = string.Empty;
+        public string ServiceId { get; set; } = string.Empty;
+        public string? AcceptedCraftsmanId { get; set; }
+        public string? DirectCraftsmanId { get; set; }
+        #endregion
 
-        public string CustomerId { get; set; }
-        public string ServiceId { get; set; } 
-        public string AcceptedCraftsmanId { get; set; }
-
-
+        #region Navigation Properties
         [ForeignKey("AcceptedCraftsmanId")]
-        public Craftsman AcceptedWorker { get; set; }
+        public Craftsman? AcceptedWorker { get; set; }
+
+        [ForeignKey("DirectCraftsmanId")]
+        public Craftsman? DirectCraftsman { get; set; }
 
         [ForeignKey("ServiceId")]
-        public Service serviceType { get; set; }
+        public Service ServiceType { get; set; } = null!;
          
         [ForeignKey("CustomerId")]
-        public Customer Customer { get; set; }
+        public Customer Customer { get; set; } = null!;
 
         public ICollection<Offer> Offers { get; set; } = new List<Offer>();
+        public ICollection<JobRequest> DirectRequests { get; set; } = new List<JobRequest>();
+        public ICollection<JobAttachment> Attachments { get; set; } = new List<JobAttachment>();
+        #endregion
     }
 }

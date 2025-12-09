@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using San3a.Core.Base;
 
 namespace San3a.Core.Entities
 {
-    public class Admin
+    public class Admin : BaseEntity
     {
-        [Key]
-        public string Id { get; set; }    // <-- This is AppUserId (shared PK)
+        #region Properties
         public bool IsSuperAdmin { get; set; }
+        #endregion
 
+        #region Navigation Properties
         public AppUser AppUser { get; set; }
+        #endregion
     }
 }

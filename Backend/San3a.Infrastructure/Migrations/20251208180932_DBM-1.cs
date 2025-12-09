@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace San3a.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Updates : Migration
+    public partial class DBM1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -57,13 +57,35 @@ namespace San3a.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FileUploads",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FileUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FileType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FileSize = table.Column<long>(type: "bigint", nullable: false),
+                    UploadedById = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EntityType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EntityId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FileUploads", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Services",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -198,7 +220,8 @@ namespace San3a.Infrastructure.Migrations
                 name: "Customers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    NationalId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -255,6 +278,28 @@ namespace San3a.Infrastructure.Migrations
                         column: x => x.ServiceId,
                         principalTable: "Services",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CraftsmanPortfolios",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CraftsmanId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CraftsmanPortfolios", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CraftsmanPortfolios_Craftsmen_CraftsmanId",
+                        column: x => x.CraftsmanId,
+                        principalTable: "Craftsmen",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -267,12 +312,14 @@ namespace San3a.Infrastructure.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Budget = table.Column<double>(type: "float", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PostingType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ServiceId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    AcceptedCraftsmanId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    AcceptedCraftsmanId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    DirectCraftsmanId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -280,6 +327,12 @@ namespace San3a.Infrastructure.Migrations
                     table.ForeignKey(
                         name: "FK_JobPosts_Craftsmen_AcceptedCraftsmanId",
                         column: x => x.AcceptedCraftsmanId,
+                        principalTable: "Craftsmen",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_JobPosts_Craftsmen_DirectCraftsmanId",
+                        column: x => x.DirectCraftsmanId,
                         principalTable: "Craftsmen",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -294,48 +347,105 @@ namespace San3a.Infrastructure.Migrations
                         column: x => x.ServiceId,
                         principalTable: "Services",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PortfolioImages",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    PortfolioId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DisplayOrder = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PortfolioImages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PortfolioImages_CraftsmanPortfolios_PortfolioId",
+                        column: x => x.PortfolioId,
+                        principalTable: "CraftsmanPortfolios",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Reviews",
+                name: "PortfolioRequests",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Rating = table.Column<int>(type: "int", nullable: false),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PortfolioId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    ReviewerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RevieweeId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CraftsmanId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Reviews", x => x.Id);
+                    table.PrimaryKey("PK_PortfolioRequests", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Reviews_AspNetUsers_RevieweeId",
-                        column: x => x.RevieweeId,
-                        principalTable: "AspNetUsers",
+                        name: "FK_PortfolioRequests_CraftsmanPortfolios_PortfolioId",
+                        column: x => x.PortfolioId,
+                        principalTable: "CraftsmanPortfolios",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Reviews_AspNetUsers_ReviewerId",
-                        column: x => x.ReviewerId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Reviews_Craftsmen_CraftsmanId",
-                        column: x => x.CraftsmanId,
-                        principalTable: "Craftsmen",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Reviews_Customers_CustomerId",
+                        name: "FK_PortfolioRequests_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "JobAttachments",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    JobId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FileUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JobAttachments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_JobAttachments_JobPosts_JobId",
+                        column: x => x.JobId,
+                        principalTable: "JobPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "JobRequests",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    JobId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CraftsmanId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JobRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_JobRequests_Craftsmen_CraftsmanId",
+                        column: x => x.CraftsmanId,
+                        principalTable: "Craftsmen",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_JobRequests_JobPosts_JobId",
+                        column: x => x.JobId,
+                        principalTable: "JobPosts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -344,11 +454,11 @@ namespace San3a.Infrastructure.Migrations
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     JobId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    CraftsmanId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    CraftsmanId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -407,9 +517,26 @@ namespace San3a.Infrastructure.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CraftsmanPortfolios_CraftsmanId",
+                table: "CraftsmanPortfolios",
+                column: "CraftsmanId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Craftsmen_ServiceId",
                 table: "Craftsmen",
                 column: "ServiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Customers_NationalId",
+                table: "Customers",
+                column: "NationalId",
+                unique: true,
+                filter: "[NationalId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JobAttachments_JobId",
+                table: "JobAttachments",
+                column: "JobId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_JobPosts_AcceptedCraftsmanId",
@@ -422,9 +549,24 @@ namespace San3a.Infrastructure.Migrations
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_JobPosts_DirectCraftsmanId",
+                table: "JobPosts",
+                column: "DirectCraftsmanId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_JobPosts_ServiceId",
                 table: "JobPosts",
                 column: "ServiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JobRequests_CraftsmanId",
+                table: "JobRequests",
+                column: "CraftsmanId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JobRequests_JobId",
+                table: "JobRequests",
+                column: "JobId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Offers_CraftsmanId",
@@ -437,24 +579,19 @@ namespace San3a.Infrastructure.Migrations
                 column: "JobId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reviews_CraftsmanId",
-                table: "Reviews",
-                column: "CraftsmanId");
+                name: "IX_PortfolioImages_PortfolioId",
+                table: "PortfolioImages",
+                column: "PortfolioId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reviews_CustomerId",
-                table: "Reviews",
+                name: "IX_PortfolioRequests_CustomerId",
+                table: "PortfolioRequests",
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reviews_RevieweeId",
-                table: "Reviews",
-                column: "RevieweeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Reviews_ReviewerId",
-                table: "Reviews",
-                column: "ReviewerId");
+                name: "IX_PortfolioRequests_PortfolioId",
+                table: "PortfolioRequests",
+                column: "PortfolioId");
         }
 
         /// <inheritdoc />
@@ -479,13 +616,25 @@ namespace San3a.Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "FileUploads");
+
+            migrationBuilder.DropTable(
+                name: "JobAttachments");
+
+            migrationBuilder.DropTable(
+                name: "JobRequests");
+
+            migrationBuilder.DropTable(
                 name: "Offers");
 
             migrationBuilder.DropTable(
-                name: "RefreshToken");
+                name: "PortfolioImages");
 
             migrationBuilder.DropTable(
-                name: "Reviews");
+                name: "PortfolioRequests");
+
+            migrationBuilder.DropTable(
+                name: "RefreshToken");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -494,16 +643,19 @@ namespace San3a.Infrastructure.Migrations
                 name: "JobPosts");
 
             migrationBuilder.DropTable(
-                name: "Craftsmen");
+                name: "CraftsmanPortfolios");
 
             migrationBuilder.DropTable(
                 name: "Customers");
 
             migrationBuilder.DropTable(
-                name: "Services");
+                name: "Craftsmen");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Services");
         }
     }
 }

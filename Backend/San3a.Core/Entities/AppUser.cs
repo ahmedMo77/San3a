@@ -1,26 +1,22 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using San3a.Core.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace San3a.Core.Entities
 {
     public class AppUser : IdentityUser
     {
-        public string FullName { get; set; }
-        public string Address { get; set; }
-        public string City { get; set; }
+        #region Properties
+        public string FullName { get; set; } = string.Empty;
+        public string Address { get; set; } = string.Empty;
+        public string City { get; set; } = string.Empty;
         public string? ProfileImageUrl { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        #endregion
 
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt {  get; set; }
-
+        #region Navigation Properties
         public ICollection<RefreshToken>? RefreshTokens { get; set; } = new List<RefreshToken>();
-        public ICollection<Review> WrittenReviews { get; set; } = new List<Review>();
-        public ICollection<Review> ReceivedReviews { get; set; } = new List<Review>();
+        #endregion
     }
 }

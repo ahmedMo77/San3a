@@ -27,4 +27,8 @@
     <ProjectReference Include="..\San3a.Application\San3a.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>

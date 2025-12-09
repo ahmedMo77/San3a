@@ -1,21 +1,24 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using San3a.Application.Interfaces;
 using San3a.Core.DTOs;
 using San3a.Core.Entities;
 using San3a.Infrastructure.Data;
-using System.Data;
 
 namespace San3a.Application.Services
 {
     public class AuthService : IAuthService
     {
+        #region Fields
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly ITokenService _tokenService;
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        #endregion
 
+        #region Constructors
         public AuthService(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, ITokenService tokenService, AppDbContext context, IMapper mapper)
         {
             _userManager = userManager;
@@ -24,18 +27,26 @@ namespace San3a.Application.Services
             _context = context;
             _mapper = mapper;
         }
+        #endregion
 
-
-        // --------------------
-        // Create Admin
-        // --------------------
+        #region Public Methods
         public async Task<AuthResultDto> CreateAdminAsync(RegisterAdminDto dto)
         {
+            if (dto.Password != dto.ConfirmPassword)
+            {
+                return new AuthResultDto
+                {
+                    Success = false,
+                    Message = "Password and Confirm Password do not match"
+                };
+            }
+
             var user = _mapper.Map<AppUser>(dto);
             var result = await _userManager.CreateAsync(user, dto.Password);
             
             if (!result.Succeeded)
-            {   return new AuthResultDto
+            {   
+                return new AuthResultDto
                 {
                     Success = false,
                     Message = string.Join(", ", result.Errors.Select(e => e.Description))
@@ -56,16 +67,38 @@ namespace San3a.Application.Services
             await _context.SaveChangesAsync();
             return await _tokenService.GenerateTokensPairAsync(user);
         }
-        // --------------------
-        // Register Customer
-        // --------------------
+
         public async Task<AuthResultDto> RegisterCustomerAsync(RegisterAppUserDto dto)
         {
+            if (dto.Password != dto.ConfirmPassword)
+            {
+                return new AuthResultDto
+                {
+                    Success = false,
+                    Message = "Password and Confirm Password do not match"
+                };
+            }
+
+            // Check if NationalId already exists (if provided)
+            if (!string.IsNullOrWhiteSpace(dto.NationalId))
+            {
+                var existingCustomer = _context.Customers.FirstOrDefault(c => c.NationalId == dto.NationalId);
+                if (existingCustomer != null)
+                {
+                    return new AuthResultDto
+                    {
+                        Success = false,
+                        Message = "National ID already exists"
+                    };
+                }
+            }
+
             var user = _mapper.Map<AppUser>(dto);
 
             var result = await _userManager.CreateAsync(user, dto.Password);
             if (!result.Succeeded)
-            {   return new AuthResultDto
+            {   
+                return new AuthResultDto
                 {
                     Success = false,
                     Message = string.Join(", ", result.Errors.Select(e => e.Description))
@@ -77,7 +110,8 @@ namespace San3a.Application.Services
             var customer = new Customer 
             { 
                 Id = user.Id,
-                AppUser = user 
+                AppUser = user,
+                NationalId = dto.NationalId
             };
 
             _context.Customers.Add(customer);
@@ -85,16 +119,34 @@ namespace San3a.Application.Services
             return await _tokenService.GenerateTokensPairAsync(user);
         }
 
-        // --------------------
-        // Register Craftsman
-        // --------------------
         public async Task<AuthResultDto> RegisterCraftsmanAsync(RegisterCraftsmanDto dto)
         {
+            if (dto.Password != dto.ConfirmPassword)
+            {
+                return new AuthResultDto
+                {
+                    Success = false,
+                    Message = "Password and Confirm Password do not match"
+                };
+            }
+
+            // Check if NationalId already exists
+            var existingCraftsman = _context.Craftsmen.FirstOrDefault(c => c.NationalId == dto.NationalId);
+            if (existingCraftsman != null)
+            {
+                return new AuthResultDto
+                {
+                    Success = false,
+                    Message = "National ID already exists"
+                };
+            }
+
             var user = _mapper.Map<AppUser>(dto);
 
             var result = await _userManager.CreateAsync(user, dto.Password);
             if (!result.Succeeded)
-            {  return new AuthResultDto
+            {  
+                return new AuthResultDto
                 {
                     Success = false,
                     Message = string.Join(", ", result.Errors.Select(e => e.Description))
@@ -114,56 +166,56 @@ namespace San3a.Application.Services
 
             _context.Craftsmen.Add(craftsman);
             await _context.SaveChangesAsync();
-            return await _tokenService.GenerateTokensPairAsync(user);
+            
+            var authResult = await _tokenService.GenerateTokensPairAsync(user);
+            authResult.Message = "Registration successful. Your account is pending admin verification.";
+            return authResult;
         }
 
-        // --------------------
-        // Login
-        // --------------------
         public async Task<AuthResultDto> LoginAsync(LoginDto dto)
         {
-            var user = await _userManager.FindByEmailAsync(dto.Email);
+            AppUser user = null;
+            
+            // Try to find user by email first
+            user = await _userManager.FindByEmailAsync(dto.EmailOrUsername);
+            
+            // If not found by email, try by username
+            if (user == null)
+            {
+                user = await _userManager.FindByNameAsync(dto.EmailOrUsername);
+            }
+            
+            // If not found by username, try by full name
+            if (user == null)
+            {
+                user = await _userManager.Users
+                    .FirstOrDefaultAsync(u => u.FullName == dto.EmailOrUsername);
+            }
+            
+            // Validate user and password
             if (user == null || !await _userManager.CheckPasswordAsync(user, dto.Password))
                 return new AuthResultDto { Success = false, Message = "Invalid credentials" };
 
+            // Check if user is a craftsman and if verified
+            var roles = await _userManager.GetRolesAsync(user);
+            if (roles.Contains("Craftsman"))
+            {
+                var craftsman = await _context.Craftsmen.FindAsync(user.Id);
+                if (craftsman != null && !craftsman.IsVerified)
+                {
+                    var result = await _tokenService.GenerateTokensPairAsync(user);
+                    result.Message = "Login successful. Your account is pending admin verification. You will have limited access until verified.";
+                    return result;
+                }
+            }
+
             return await _tokenService.GenerateTokensPairAsync(user);
         }
 
-        // Refresh Token
         public Task<AuthResultDto> RefreshTokenAsync(string refreshToken)
         {
             return _tokenService.RefreshTokenAsync(refreshToken);
         }
-
-
-        // Password Services
-
-        public async Task<bool> ChangePasswordAsync
-            (string userId, string oldPassword, string newPassword)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null) return false;
-
-            var result = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
-            return result.Succeeded;
-        }
-
-        public async Task<string> ForgotPasswordAsync(string email)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null) return null;
-
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            return token;
-        }
-
-        public async Task<bool> ResetPasswordAsync(ResetPasswordDto dto)
-        {
-            var user = await _userManager.FindByEmailAsync(dto.Email);
-            if (user == null) return false;
-
-            var result = await _userManager.ResetPasswordAsync(user, dto.Token, dto.NewPassword);
-            return result.Succeeded;
-        }
+        #endregion
     }
 }

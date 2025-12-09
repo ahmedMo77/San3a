@@ -8,6 +8,8 @@ namespace San3a.Core.DTOs
 {
     public class RegisterAdminDto : RegisterAppUserDto
     {
+        #region Properties
         public bool IsSuperAdmin { get; set; }
+        #endregion
     }
 }
