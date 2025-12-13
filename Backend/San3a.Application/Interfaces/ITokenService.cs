@@ -1,4 +1,4 @@
-﻿using San3a.Core.DTOs;
+﻿using San3a.Core.DTOs.auth;
 using San3a.Core.Entities;
 
 namespace San3a.Application.Interfaces

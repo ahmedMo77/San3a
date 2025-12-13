@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace San3a.Core.DTOs
+namespace San3a.Core.DTOs.auth
 {
     public class LoginDto
     {

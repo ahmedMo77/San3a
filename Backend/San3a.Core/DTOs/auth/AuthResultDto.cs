@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace San3a.Core.DTOs
+namespace San3a.Core.DTOs.auth
 {
     public class AuthResultDto
     {
         #region Properties
         public bool Success { get; set; }
         public string Message { get; set; }
-        public string Token { get; set; }
-        public string RefreshToken { get; set; }
+        public string? Token { get; set; }
+        public string ?RefreshToken { get; set; }
         #endregion
     }
 }
