@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace San3a.Core.DTOs
+namespace San3a.Core.DTOs.auth
 {
     public class RegisterAdminDto : RegisterAppUserDto
     {

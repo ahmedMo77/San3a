@@ -7,12 +7,21 @@ namespace San3a.Core.Entities
     public class AppUser : IdentityUser
     {
         #region Properties
-        public string FullName { get; set; } = string.Empty;
-        public string Address { get; set; } = string.Empty;
-        public string City { get; set; } = string.Empty;
+        public string FullName { get; set; } 
+         public string Governorate {  get; set; }
         public string? ProfileImageUrl { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        // Email verfication properties
+        public bool IsEmailVerified { get; set; } = false;
+        public string? EmailVerificationCode { get; set; }
+        public DateTime? EmailVerificationCodeExpiry { get; set; }
+
+        //reset code properties
+        public string? PasswordResetCode { get; set; }
+        public DateTime? PasswordResetCodeExpiry { get; set; }
+        public int PasswordResetAttempts { get; set; } = 0;
         #endregion
 
         #region Navigation Properties

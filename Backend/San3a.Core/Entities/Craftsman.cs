@@ -1,18 +1,22 @@
 ﻿using San3a.Core.Base;
 using San3a.Core.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace San3a.Core.Entities
 {
     public class Craftsman : BaseEntity
     {
         #region Properties
-        public string NationalId { get; set; } = string.Empty;
+        public string NationalId { get; set; } 
+
         public bool IsVerified { get; set; }
-        public string ServiceId { get; set; } = string.Empty;
+        public string ?ServiceId { get; set; }
         #endregion
 
         #region Navigation Properties
         public AppUser AppUser { get; set; } = null!;
+        [ForeignKey("ServiceId" +
+            "")]
         public Service Service { get; set; } = null!;
         public ICollection<Offer> Offers { get; set; } = new List<Offer>();
         public ICollection<Job> AcceptedJobs { get; set; } = new List<Job>();

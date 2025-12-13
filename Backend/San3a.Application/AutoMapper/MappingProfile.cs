@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
-using San3a.Core.DTOs;
 using San3a.Core.DTOs.Craftsman;
-using San3a.Core.DTOs.Customer;
 using San3a.Core.DTOs.Job;
 using San3a.Core.DTOs.Offer;
 using San3a.Core.DTOs.Service;
 using San3a.Core.DTOs.Portfolio;
 using San3a.Core.Entities;
+using San3a.Core.DTOs.auth;
+using San3a.Core.DTOs.Customer;
 
 namespace San3a.Application.AutoMapper
 {
@@ -40,8 +40,7 @@ namespace San3a.Application.AutoMapper
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.AppUser.FullName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.AppUser.Email))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.AppUser.PhoneNumber))
-                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.AppUser.Address))
-                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.AppUser.City))
+                .ForMember(dest => dest.Governorate, opt => opt.MapFrom(src => src.AppUser.Governorate))
                 .ForMember(dest => dest.ServiceName, opt => opt.MapFrom(src => src.Service.Name))
                 .ForMember(dest => dest.ProfileImageUrl, opt => opt.MapFrom(src => src.AppUser.ProfileImageUrl))
                 .ForMember(dest => dest.AverageRating, opt => opt.Ignore())
@@ -58,8 +57,7 @@ namespace San3a.Application.AutoMapper
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.AppUser.FullName))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.AppUser.Email))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.AppUser.PhoneNumber))
-                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.AppUser.Address))
-                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.AppUser.City))
+                .ForMember(dest => dest.Governorate, opt => opt.MapFrom(src => src.AppUser.Governorate))
                 .ForMember(dest => dest.ProfileImageUrl, opt => opt.MapFrom(src => src.AppUser.ProfileImageUrl))
                 .ForMember(dest => dest.JobsCount, opt => opt.MapFrom(src => src.Jobs.Count))
                 .ForMember(dest => dest.ReviewsCount, opt => opt.Ignore());

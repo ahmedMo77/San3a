@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using San3a.Application.Interfaces;
-using San3a.Core.DTOs;
+using San3a.Core.DTOs.auth;
 using San3a.Core.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

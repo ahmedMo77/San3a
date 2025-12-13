@@ -76,6 +76,7 @@ namespace San3a
             builder.Services.AddScoped<ICraftsmanPortfolioRepository, CraftsmanPortfolioRepository>();
             builder.Services.AddScoped<IPortfolioRequestRepository, PortfolioRequestRepository>();
             builder.Services.AddScoped<IFileUploadRepository, FileUploadRepository>();
+          
 
             // Unit of Work
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -93,13 +94,15 @@ namespace San3a
             builder.Services.AddAutoMapper(typeof(MappingProfile));
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
+
 
             // CORS
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("San3aPolicy", policy =>
                 {
-                    policy.WithOrigins("http://localhost:3000", "http://localhost:5173", "http://localhost:4200")
+                    policy.WithOrigins("http://localhost:3000", "http://localhost:5173", "http://localhost:4200", "https://san3a.runasp.net")
                           .AllowAnyMethod()
                           .AllowAnyHeader()
                           .AllowCredentials();
@@ -172,11 +175,11 @@ namespace San3a
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 await DataSeeder.SeedSuperAdminAsync(userManager, dbContext);
+                await DataSeeder.SeedServicesAsync(dbContext);
             }
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
+          
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
                 {
@@ -187,7 +190,7 @@ namespace San3a
                     
                     c.DisplayRequestDuration();
                 });
-            }
+            
 
             // Middleware - Order is important!
             app.UseMiddleware<RateLimitingMiddleware>();

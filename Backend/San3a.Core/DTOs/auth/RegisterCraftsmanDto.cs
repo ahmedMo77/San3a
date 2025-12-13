@@ -1,7 +1,7 @@
 ﻿using San3a.Core.ValidationAttributes;
 using System.ComponentModel.DataAnnotations;
 
-namespace San3a.Core.DTOs
+namespace San3a.Core.DTOs.auth
 {
     public class RegisterCraftsmanDto : RegisterAppUserDto
     {
