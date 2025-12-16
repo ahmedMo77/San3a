@@ -322,13 +322,13 @@ namespace San3a.Application.Services
         #endregion
 
         #region Email Verification Methods
-        public async Task<(bool Success, string Message)> VerifyEmailAsync(string token)
+        public async Task<(bool Success, string Message)> VerifyEmailAsync(VerifyEmailDTO dto )
         {
-            if (string.IsNullOrEmpty(token))
-                return (false, "Verification token is required");
+            if (string.IsNullOrEmpty(dto.code)||string.IsNullOrEmpty(dto.Email))
+                return (false, "Verification token or Email is required");
 
             var user = await _userManager.Users
-                .FirstOrDefaultAsync(u => u.EmailVerificationCode == token);
+                .FirstOrDefaultAsync(u => u.EmailVerificationCode ==dto.code&&dto.Email==u.Email);
 
             if (user == null)
                 return (false, "Invalid or expired verification code");

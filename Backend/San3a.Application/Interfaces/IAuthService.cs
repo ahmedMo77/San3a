@@ -16,7 +16,7 @@ namespace San3a.Application.Interfaces
         #endregion
 
         #region Email Verification Methods
-        Task<(bool Success, string Message)> VerifyEmailAsync(string token);
+        Task<(bool Success, string Message)> VerifyEmailAsync(VerifyEmailDTO dto);
         Task<(bool Success, string Message)> ResendVerificationCodeAsync(string email);
         Task<(bool Success, string Message)> ResendPasswordResetCodeAsync(string email);
         #endregion
