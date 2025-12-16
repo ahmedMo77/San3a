@@ -46,7 +46,7 @@ namespace San3a.WebApi.Controllers
       
 
 
-        public async Task<IActionResult> RegisterCustomer([FromBody] RegisterAppUserDto dto)
+        public async Task<IActionResult> RegisterCustomer([FromQuery] RegisterAppUserDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -129,13 +129,13 @@ namespace San3a.WebApi.Controllers
         #endregion
 
         #region Email Verification Endpoints
-        [HttpGet("verify", Name = "VerifyEmail")]
+        [HttpPost("verify", Name = "VerifyEmail")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> VerifyEmail([FromQuery] string token)
+        public async Task<IActionResult> VerifyEmail([FromBody] VerifyEmailDTO dto)
         {
-            var (success, message) = await _authService.VerifyEmailAsync(token);
+            var (success, message) = await _authService.VerifyEmailAsync(dto);
 
             if (!success)
                 return BadRequest(message);
