@@ -1,31 +1,35 @@
-import { Flex, List, Text } from "@chakra-ui/react"
-import Button from "../../sharedComponents/Button"
-import ButtonContainer from "../../sharedComponents/Button"
+import { Flex, List } from "@chakra-ui/react";
+import ButtonContainer from "../../sharedComponents/Button";
+import { Link, useNavigate } from "react-router-dom";
+import Logo from "../../sharedComponents/logo";
 
 function Navbar() {
-    const navItems = [
-        { title: "الرئيسية", href: "/" },
-        { title: "الخدمات", href: "/الخدمات" },
-        { title: "تواصل معنا", href: "/تواصل" },
-    ]
-    return (
-        <Flex justifyContent={"space-between"} mx={32} my={6}>
+  const navItems = [
+    { title: "الرئيسية", href: "/" },
+    { title: "الخدمات", href: "/الخدمات" },
+    { title: "تواصل معنا", href: "/تواصل" },
+  ];
 
-            <Text fontWeight={"bold"} fontSize={"3xl"}>
-                <Text as="span" color={"primary.500"}>صن</Text>
-                <Text as="span" color={"accent.500"}>عة</Text>
-            </Text>
+  const navigate = useNavigate();
 
-            <List.Root flexDirection={"row"} listStyle={"none"} gap={10}>
-                {navItems.map((item) => (
-                    <List.Item key={item.href}>{item.title}</List.Item>
-                ))}
-            </List.Root>
-
-            <ButtonContainer/>
-
-        </Flex>
-    )
+  return (
+    <Flex justifyContent={"space-between"} mx={32} my={6}>
+      <Logo />
+      <List.Root flexDirection={"row"} listStyle={"none"} gap={10}>
+        {navItems.map((item) => (
+          <List.Item key={item.href}>
+            <Link to={item.href}>{item.title}</Link>
+          </List.Item>
+        ))}
+      </List.Root>
+      <ButtonContainer
+        secondaryText="تسجيل دخول"
+        primaryText="حساب جديد"
+        onPrimaryClick={() => navigate("/إنشاء-حساب")}
+        onSecondaryClick={() => navigate("/تسجيل-الدخول")}
+      />
+    </Flex>
+  );
 }
 
-export default Navbar
+export default Navbar;

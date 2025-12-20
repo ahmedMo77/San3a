@@ -1,0 +1,32 @@
+import { Flex, Text } from "@chakra-ui/react";
+import BoxContainer from "../../../sharedComponents/boxContainer";
+import { useNavigate } from "react-router-dom";
+
+const RegisterClientCard = ({ faded, onHover, onLeave }) => {
+  const navigate = useNavigate();
+  return (
+    <BoxContainer
+      height={56}
+      width={56}
+      bgColor="heading.500"
+      rounded="2xl"
+      opacity={faded ? 0.5 : 1}
+      transition="opacity 0.2s ease"
+      onMouseEnter={onHover}
+      onMouseLeave={onLeave}
+      cursor="pointer"
+      onClick={() => navigate("/إنشاء-حساب/عميل")}
+    >
+      <Flex direction="column" alignItems="center" gap={4}>
+        <Text fontWeight="bold" fontSize="2xl" color="white">
+          زبون
+        </Text>
+        <Text width="70%" textAlign="center" fontSize="sm" color="white">
+          إنشاء حساب علشان تطلب خدمة.
+        </Text>
+      </Flex>
+    </BoxContainer>
+  );
+};
+
+export default RegisterClientCard;
