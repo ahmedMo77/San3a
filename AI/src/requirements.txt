@@ -1,0 +1,8 @@
+fastapi==0.121.0
+uvicorn==0.38.0
+pydantic-settings==2.11.0
+sentence-transformers==2.5.1
+transformers==4.44.2
+qdrant-client==1.16.1
+openai==2.8.1
+cohere==5.20.0
